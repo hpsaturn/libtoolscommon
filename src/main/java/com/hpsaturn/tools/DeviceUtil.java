@@ -1,6 +1,7 @@
 package com.hpsaturn.tools;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -48,6 +49,7 @@ public class DeviceUtil {
      * @param context {@link android.content.Context}.
      * @return IMEI {@link String}.
      */
+    @SuppressLint("MissingPermission")
     public static String getIMEI(Context context) {
         try {
             TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
@@ -55,10 +57,8 @@ public class DeviceUtil {
                 Logger.e(TAG,"getIMEI permission error, add TELEPHONY_SERVICE permission");
                 return null;
             }
+            assert manager != null;
             return manager.getDeviceId();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            return null;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -109,7 +109,8 @@ public class DeviceUtil {
     public static boolean isConnected(Context context) {
         try {
             ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            assert connMgr != null;
+            @SuppressLint("MissingPermission") NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
             return networkInfo != null && networkInfo.isConnected();
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -150,8 +151,9 @@ public class DeviceUtil {
     public static String getWifiMac(Context context) {
         String macAddress = null;
         try {
-            WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-            WifiInfo wInfo = wifiManager.getConnectionInfo();
+            WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(context.WIFI_SERVICE);
+            assert wifiManager != null;
+            @SuppressLint("MissingPermission") WifiInfo wInfo = wifiManager.getConnectionInfo();
             macAddress = wInfo.getMacAddress();
             return macAddress;
         } catch (NullPointerException e) {
@@ -171,9 +173,10 @@ public class DeviceUtil {
      * @return Wifi network name.
      */
     public static String getWifiName(Context context) {
-        WifiManager manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        WifiManager manager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        assert manager != null;
         if (manager.isWifiEnabled()) {
-            WifiInfo wifiInfo = manager.getConnectionInfo();
+            @SuppressLint("MissingPermission") WifiInfo wifiInfo = manager.getConnectionInfo();
             if (wifiInfo != null) {
                 NetworkInfo.DetailedState state = WifiInfo.getDetailedStateOf(wifiInfo.getSupplicantState());
                 if (state == NetworkInfo.DetailedState.CONNECTED || state == NetworkInfo.DetailedState.OBTAINING_IPADDR) {
@@ -206,7 +209,8 @@ public class DeviceUtil {
         String network = "unknown";
 
         ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        assert cm != null;
+        @SuppressLint("MissingPermission") NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         if (activeNetwork != null) { // connected to the internet
             if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
                 // connected to wifi
@@ -215,8 +219,6 @@ public class DeviceUtil {
                 // connected to the mobile provider's data plan
                 network = activeNetwork.getTypeName()+" "+activeNetwork.getExtraInfo();
             }
-        } else {
-            if(network.isEmpty()) network = "unknown"; // not connected to the internet
         }
         network = network.replaceAll("\"" + "", "");
         Logger.d(TAG,"-->Network: "+network);
