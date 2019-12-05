@@ -576,4 +576,5 @@ public class DeviceUtil {
         output=output+"\nNetMac:\t"+getMACAddress("eth0");
         return output;
     }
+
 }

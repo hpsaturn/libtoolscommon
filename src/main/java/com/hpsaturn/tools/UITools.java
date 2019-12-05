@@ -164,6 +164,11 @@ public class UITools {
         }
     }
 
+    public static String getGooglePlayLink(Context ctx){
+        String packagename = ctx.getPackageName();
+        return "http://play.google.com/store/apps/details?id="+packagename;
+    }
+
     public static void shareText(Context ctx, String text, String title) {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
