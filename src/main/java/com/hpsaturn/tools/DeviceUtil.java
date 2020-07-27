@@ -226,7 +226,7 @@ public class DeviceUtil {
 
     }
 
-
+    @SuppressLint("MissingPermission")
     public static String getMobileNetwork(Context mContext) {
         TelephonyManager mTelephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
         int networkType = mTelephonyManager.getNetworkType();
