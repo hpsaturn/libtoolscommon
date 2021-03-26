@@ -148,13 +148,13 @@ public class DeviceUtil {
      * @param context .
      * @return Wifi Mac Address.
      */
-    @SuppressLint("HardwareIds")
+    @SuppressLint({"MissingPermission", "HardwareIds"})
     public static String getWifiMac(Context context) {
         String macAddress = null;
         try {
             WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(context.WIFI_SERVICE);
             assert wifiManager != null;
-            @SuppressLint("MissingPermission") WifiInfo wInfo = wifiManager.getConnectionInfo();
+            WifiInfo wInfo = wifiManager.getConnectionInfo();
             macAddress = wInfo.getMacAddress();
             return macAddress;
         } catch (NullPointerException e) {
