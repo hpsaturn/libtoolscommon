@@ -148,6 +148,7 @@ public class DeviceUtil {
      * @param context .
      * @return Wifi Mac Address.
      */
+    @SuppressLint("HardwareIds")
     public static String getWifiMac(Context context) {
         String macAddress = null;
         try {
