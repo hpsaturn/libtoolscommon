@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
@@ -14,7 +15,9 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.Settings;
+
 import androidx.core.app.ActivityCompat;
+
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -54,7 +57,7 @@ public class DeviceUtil {
         try {
             TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                Logger.e(TAG,"getIMEI permission error, add TELEPHONY_SERVICE permission");
+                Logger.e(TAG, "getIMEI permission error, add TELEPHONY_SERVICE permission");
                 return null;
             }
             assert manager != null;
@@ -86,7 +89,7 @@ public class DeviceUtil {
         return android.os.Build.MODEL;
     }
 
-     /*
+    /*
      * Return OS build version: a static function
      */
     public static String getAndroidBuildVersion() {
@@ -116,6 +119,35 @@ public class DeviceUtil {
             e.printStackTrace();
             return false;
         }
+    }
+
+
+    public static boolean isGPSLocationEnabled(Context ctx) {
+
+        LocationManager lm = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled;
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            return gps_enabled;
+        } catch (Exception e) {
+            Logger.w(TAG, "isGPSLocationEnabled: " + e.getMessage());
+            return false;
+        }
+
+    }
+
+    public static boolean isWiFiLocationEnabled(Context ctx) {
+
+        LocationManager lm = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
+        boolean network_enabled;
+        try {
+            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            return network_enabled;
+        } catch (Exception e) {
+            Logger.w(TAG, "isWiFiLocationEnabled: " + e.getMessage());
+            return false;
+        }
+
     }
 
     /**
@@ -215,14 +247,14 @@ public class DeviceUtil {
         if (activeNetwork != null) { // connected to the internet
             if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
                 // connected to wifi
-                network = activeNetwork.getTypeName()+" "+activeNetwork.getExtraInfo();
+                network = activeNetwork.getTypeName() + " " + activeNetwork.getExtraInfo();
             } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
                 // connected to the mobile provider's data plan
-                network = activeNetwork.getTypeName()+" "+activeNetwork.getExtraInfo();
+                network = activeNetwork.getTypeName() + " " + activeNetwork.getExtraInfo();
             }
         }
         network = network.replaceAll("\"" + "", "");
-        Logger.d(TAG,"-->Network: "+network);
+        Logger.d(TAG, "-->Network: " + network);
         return network;
 
     }
@@ -323,6 +355,7 @@ public class DeviceUtil {
 
     /**
      * capitalize
+     *
      * @param s
      * @return
      */
@@ -549,7 +582,7 @@ public class DeviceUtil {
     }
 
     public static String getGitTAG(String tag) {
-        return "["+tag+"]["+ BuildConfig.GitBranch+"]["+BuildConfig.GitHash+"]";
+        return "[" + tag + "][" + BuildConfig.GitBranch + "][" + BuildConfig.GitHash + "]";
     }
 
     public static int getVersionCode(Context ctx) {
@@ -564,19 +597,19 @@ public class DeviceUtil {
 
     public static String getDeviceInfo(Context context) {
         String output = "";
-        output=output+"Target:\t"+BuildConfig.EnvTarget;
-        output=output+"\nDebug:\t"+BuildConfig.isLoggerEnable;
-        output=output+"\nBranch:\t"+BuildConfig.GitBranch;
-        output=output+"\nhash:\t"+BuildConfig.GitHash;
-        output=output+"\nID:\t"+getDeviceId(context);
-        output=output+"\nRevision:\t"+getVersionCode(context);
-        output=output+"\nVersion:\t"+getVersionName(context);
-        output=output+"\nAPI:\t"+getAPILevel();
-        output=output+"\nHardware:\t"+getHardware();
-        output=output+"\nOS:\t"+getVersionOS();
-        output=output+"\nWifi:\t"+getWifiName(context);
-        output=output+"\nWifiMac:\t"+getWifiMac(context);
-        output=output+"\nNetMac:\t"+getMACAddress("eth0");
+        output = output + "Target:\t" + BuildConfig.EnvTarget;
+        output = output + "\nDebug:\t" + BuildConfig.isLoggerEnable;
+        output = output + "\nBranch:\t" + BuildConfig.GitBranch;
+        output = output + "\nhash:\t" + BuildConfig.GitHash;
+        output = output + "\nID:\t" + getDeviceId(context);
+        output = output + "\nRevision:\t" + getVersionCode(context);
+        output = output + "\nVersion:\t" + getVersionName(context);
+        output = output + "\nAPI:\t" + getAPILevel();
+        output = output + "\nHardware:\t" + getHardware();
+        output = output + "\nOS:\t" + getVersionOS();
+        output = output + "\nWifi:\t" + getWifiName(context);
+        output = output + "\nWifiMac:\t" + getWifiMac(context);
+        output = output + "\nNetMac:\t" + getMACAddress("eth0");
         return output;
     }
 
