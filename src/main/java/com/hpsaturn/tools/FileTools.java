@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
@@ -106,17 +107,19 @@ public class FileTools {
         private final byte[] downloadFile;
         private final String dirName;
         private final String fileName;
+        private final Context ctx;
 
-        public saveDownloadFile(byte[] data, String dirName, String fileName) {
+        public saveDownloadFile(Context context, byte[] data, String dirName, String fileName) {
             this.downloadFile = data;
             this.dirName = dirName;
             this.fileName = fileName;
+            this.ctx = context;
         }
 
         @Override
         protected Void doInBackground(byte[]... data) {
             Logger.d(TAG, "[SD] saveDownloadFile /"+dirName+"/"+fileName);
-            File file = getDownloadFilePath(dirName,fileName);
+            File file = getDownloadFilePath(ctx, dirName,fileName);
             Logger.d(TAG, "[SD] path: "+file.getAbsolutePath());
             try {
                 FileOutputStream fos = new FileOutputStream(file.getPath());
@@ -131,8 +134,11 @@ public class FileTools {
         }
     }
 
-    private static File getDownloadStorageDir(String dirName) {
+    private static File getDownloadStorageDir(Context ctx, String dirName) {
         File sdcard = Environment.getExternalStorageDirectory();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1) {
+            sdcard = ctx.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        }
         File file = new File(sdcard.getAbsolutePath() + "/" + dirName);
         if (!file.mkdir()) {
             Logger.i(TAG,"[SD] '"+ dirName+ "' mkdir false! (maybe it already exists)");
@@ -141,8 +147,8 @@ public class FileTools {
     }
 
     @NonNull
-    private static File getDownloadFilePath(String dirName, String fileName) {
-        return new File(getDownloadStorageDir(dirName), fileName);
+    private static File getDownloadFilePath(Context ctx, String dirName, String fileName) {
+        return new File(getDownloadStorageDir(ctx, dirName), fileName);
     }
 
     @NonNull
