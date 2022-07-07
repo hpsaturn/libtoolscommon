@@ -16,7 +16,6 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.Settings;
 
-import androidx.core.app.ActivityCompat;
 
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
@@ -25,6 +24,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -52,20 +54,20 @@ public class DeviceUtil {
      * @param context {@link android.content.Context}.
      * @return IMEI {@link String}.
      */
-    @SuppressLint("MissingPermission")
     public static String getIMEI(Context context) {
-        try {
-            TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                Logger.e(TAG, "getIMEI permission error, add TELEPHONY_SERVICE permission");
-                return null;
-            }
-            assert manager != null;
-            return manager.getDeviceId();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+//        try {
+//            TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+//            if (AppCompatActivity.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+//                Logger.e(TAG, "getIMEI permission error, add TELEPHONY_SERVICE permission");
+//                return null;
+//            }
+//            assert manager != null;
+//            return manager.getDeviceId();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+        return "";
     }
 
     /**
