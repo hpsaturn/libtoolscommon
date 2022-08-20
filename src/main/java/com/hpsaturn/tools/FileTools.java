@@ -12,7 +12,6 @@ import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicYuvToRGB;
 import android.renderscript.Type;
-import androidx.annotation.NonNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -146,12 +145,10 @@ public class FileTools {
         return file;
     }
 
-    @NonNull
     private static File getDownloadFilePath(Context ctx, String dirName, String fileName) {
         return new File(getDownloadStorageDir(ctx, dirName), fileName);
     }
 
-    @NonNull
     private static File getTempFilePath() {
         File sdcard = Environment.getExternalStorageDirectory();
         File dir = new File(sdcard.getAbsolutePath() + "/temp/");
